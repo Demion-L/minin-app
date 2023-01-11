@@ -1,14 +1,21 @@
 import React from "react";
 
 import { useSearchUsersQuery } from "../store/github/github.api";
+import { useDebounce } from "../hooks/debounce";
 
 export default function HomePage() {
   const [search, setSearch] = React.useState("");
-  const { isLoading, isError, data } = useSearchUsersQuery("vladilen");
+  const [dropdown, setDropdown] = React.useState(false);
+  const debounced = useDebounce(search);
+  const { isLoading, isError, data } = useSearchUsersQuery(debounced, {
+    skip: debounced.length < 3,
+  });
 
   React.useEffect(() => {
-    console.log(search);
-  }, [search]);
+    if (data) {
+      setDropdown(debounced.length > 3 && data.length > 0);
+    }
+  }, [debounced, data]);
 
   return (
     <div className='flex fustify-center pt-10 mx-auto h-screen w-screen'>
@@ -24,9 +31,16 @@ export default function HomePage() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-      <div className='absolute top-[42px] left-0 right-0 max-h-[200px] shadow-md bg-white'>
-        Some data
-      </div>
+      {dropdown && (
+        <ul className='list-none absolute top-[42px] overflof-y-scroll left-0 right-0 max-h-[200px] shadow-md bg-white'>
+          {isLoading && <p className='text-center'>Loading...</p>}
+          {data?.map((user) => (
+            <li key={user.id} className='py-2 px-4 hover:bg-gray-500 hover'>
+              {user.login}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
