@@ -5,6 +5,7 @@ import {
   useSearchUsersQuery,
 } from "../store/github/github.api";
 import { useDebounce } from "../hooks/debounce";
+import RepoCard from "../components/RepoCard";
 
 export default function HomePage() {
   const [search, setSearch] = React.useState("");
@@ -27,6 +28,7 @@ export default function HomePage() {
 
   const clickHendler = (username: string) => {
     fetchRepos(username);
+    setDropdown(false);
   };
 
   return (
@@ -61,7 +63,7 @@ export default function HomePage() {
             <p className='text-center'>Repos are loading...</p>
           )}
           {repos?.map((repo) => (
-            <p>{repo.url}</p>
+            <RepoCard repo={repo} key={repo.id} />
           ))}
         </div>
       </div>

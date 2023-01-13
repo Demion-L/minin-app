@@ -22,10 +22,12 @@ export interface IOwner {
 export interface IRepo {
   id: number;
   name: string;
+  full_name: string;
+  watchers: string;
+  forks: string;
   private: boolean;
   owner: IOwner;
   html_url: string;
   description: string;
-  fork: string;
   url: string;
 }
