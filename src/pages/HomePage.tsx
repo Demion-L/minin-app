@@ -9,6 +9,7 @@ export default function HomePage() {
   const debounced = useDebounce(search);
   const { isLoading, isError, data } = useSearchUsersQuery(debounced, {
     skip: debounced.length < 3,
+    refetchOnFocus: true,
   });
 
   React.useEffect(() => {
@@ -16,6 +17,8 @@ export default function HomePage() {
       setDropdown(debounced.length > 3 && data.length > 0);
     }
   }, [debounced, data]);
+
+  const clickHendler = (username: string) => {};
 
   return (
     <div className='flex fustify-center pt-10 mx-auto h-screen w-screen'>
@@ -35,7 +38,10 @@ export default function HomePage() {
         <ul className='list-none absolute top-[42px] overflof-y-scroll left-0 right-0 max-h-[200px] shadow-md bg-white'>
           {isLoading && <p className='text-center'>Loading...</p>}
           {data?.map((user) => (
-            <li key={user.id} className='py-2 px-4 hover:bg-gray-500 hover'>
+            <li
+              key={user.id}
+              onClick={() => clickHendler(user.login)}
+              className='py-2 px-4 hover:bg-gray-500 hover'>
               {user.login}
             </li>
           ))}
